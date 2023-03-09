@@ -66,7 +66,7 @@ namespace TraningMvc.Controllers
             return Json(JsonConvert.SerializeObject(filterProcedures));
         }
 
-        
+         
         public IActionResult Delete(int id)
         {
             db.Employees.Remove(db.Employees.Find(id));
