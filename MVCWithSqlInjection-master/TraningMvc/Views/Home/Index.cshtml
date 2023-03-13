@@ -98,6 +98,7 @@
 
     <div style="margin-left:315px" class="mt-2">
         <button id="btn_showFilter" type="button" class="btn btn-primary">Filtre Göster/Gizle</button>
+        <button id="btn_clear" type="button" onclick="clearTextbox()" class="btn btn-primary">Temizle</button>
         <a class="btn btn-primary" data-target="#createEmployee" id="btn_createOrUpdate" data-toggle="modal">Yeni Ekle</a><br />
     </div>
     <div class="container mt-2">
@@ -215,7 +216,11 @@
 
         }
 
-        
+        function clearTextbox() {
+            $("#Firstname").val("");
+            $("#Lastname").val("");
+            $("#cmb_departmanID").val(0);
+        }
 
 
         //function openPopup() {
