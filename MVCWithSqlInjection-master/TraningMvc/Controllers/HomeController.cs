@@ -18,11 +18,10 @@ namespace TraningMvc.Controllers
         {
             this.db = db;
         }
-        public IActionResult Index(List<Employee> employees)
+        public IActionResult Index()
         {
-            employees = db.Employees.Include(x => x.Departman).ToList();
             List<Departman> departmans = db.Departmans.ToList();
-            return View((new Employee(), employees, departmans, new Employee()));
+            return View((new Employee(), departmans, new Employee()));
         }
 
         [HttpPost]
@@ -47,7 +46,7 @@ namespace TraningMvc.Controllers
             {
                 new SqlParameter("@FirstName", employee.FirstName),
                 new SqlParameter("@Lastname", employee.LastName),
-                new SqlParameter("@DepartmanID", employee.Departman.DepartmanID)
+                new SqlParameter("@DepartmanID", employee.DepartmanID)
             };
             db.Database.ExecuteSqlRaw("EXEC AddEmployee @Firstname, @LastName, @DepartmanID", parameters.ToArray());
             return RedirectToAction("Index", "Home");
@@ -66,7 +65,26 @@ namespace TraningMvc.Controllers
             return Json(JsonConvert.SerializeObject(filterProcedures));
         }
 
-         
+        public JsonResult GetRecord(int id)
+        {
+            Employee employee = db.Employees.Find(id);
+            if (employee == null)
+            {
+                return Json(null);
+            }
+            return Json(employee);
+        }
+
+        [HttpPost]
+        public IActionResult GetRecord([Bind(Prefix = "Item1")] Employee employee)
+        {
+            db.Employees.Update(employee);
+            db.SaveChanges();
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
         public IActionResult Delete(int id)
         {
             db.Employees.Remove(db.Employees.Find(id));

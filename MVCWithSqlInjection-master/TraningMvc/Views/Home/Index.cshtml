@@ -1,14 +1,17 @@
 ﻿@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
 @using MODEL.Entities;
-@model (Employee employee, List<Employee> employees, List<Departman> departmans, Employee employeeEdit)
+@model (Employee employee, List<Departman> departmans, Employee employeeEdit)
 <head>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/example1/colorbox.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
+<style>
+</style>
 <html>
 <body>
 
@@ -21,63 +24,72 @@
         </div>
     </nav>
 
-
-    <!--<div class="container">-->
-        @*method="post" asp-action="Index" asp-controller="Home"*@
-        <!--<form style="margin-left:150px; margin-right:1000px; float:inherit; margin-bottom:50px">
-            <div class="form-group">
-                <label>Firstname</label>
-                <input type="text" class="form-control" id="Firstname">
+    <div class="container mt-3">
+        <form>
+            <div class="form-row">
+                <div class="col">
+                    <label class="form-label" for="Firstname">İSİM</label>
+                    <input type="text" id="Firstname" class="form-control" />
+                </div>
+                <div class="col">
+                    <label class="form-label" for="Lastname">SOYİSİM</label>
+                    <input type="text" id="Lastname" class="form-control" />
+                </div>
             </div>
-            <div class="form-group">
-                <label for="LastName">LastName</label>
-                <input type="text" class="form-control" id="Lastname">
-            </div>
-            <div class="form-group">
-                <label for="Departman">Departman</label>
+            <div class="form-outline mb-4">
+                <label class="form-label" for="cmb_departmanID">Departman</label>
                 <select type="text" class="form-control" id="cmb_departmanID" asp-items="@(new SelectList(@Model.departmans,"DepartmanID","DepartmanName"))">
                     <option value="0">- Tümü -</option>
                 </select>
             </div>
-            <div class="form-group" style="text-align:left; margin-top:5px">
-                <button onclick="submitForm()" type="button" style="float:right; margin-left:5px" class="btn btn-primary">FİLTER</button>
-                <a class="btn btn-primary" style="float:right" data-target="#employeeCreate" data-toggle="modal">Yeni Ekle</a><br />
-            </div>
+            <!-- Submit button -->
+            <button onclick="submitForm()" type="button" class="btn btn-primary btn-block mb-4">SORGULA</button>
+            <a class="btn btn-primary btn-block mb-4" data-target="#createEmployee" id="btn_createOrUpdate" data-toggle="modal">Yeni Ekle</a><br />
+            @*<button onclick="openPopup()" type="button" class="btn btn-primary btn-block mb-4">KAYIT EKLE</button>*@
+
         </form>
-    </div>-->
+    </div>
 
 
 
+    <!-- Modal -->
+    <div class="modal fade" id="createEmployee" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Create Employee</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_CreateOrUpdate" method="post" asp-controller="Home" asp-action="Create">
+                        <div class="modal-body">
+                            @*<input type="hidden" id="employee_employeeID" name="employee.employeeID" asp-for="employee.EmployeeID" />*@
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.FirstName">Firstname</label>
+                                <input type="text" id="txt_firstname" class="form-control" asp-for="employee.FirstName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.LastName">LastName</label>
+                                <input type="text" id="txt_lastname" class="form-control" asp-for="employee.LastName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.Departman.DepartmanID">Departman</label>
+                                <select type="text" id="cmb_departmanName" class="form-control" asp-for="employee.DepartmanID" asp-items="@(new SelectList(@Model.departmans,"DepartmanID","DepartmanName"))"></select>
+                            </div>
 
-<div class="container mt-3">
-    <form>
-        <!-- 2 column grid layout with text inputs for the first and last names -->
-        <div class="form-row">
-            <div class="col">
-                    <label class="form-label" for="Firstname">İSİM</label>
-                    <input type="text" id="Firstname" class="form-control" />
-            </div>
-            <div class="col">
-                    <label class="form-label" for="Lastname">SOYİSİM</label>
-                    <input type="text" id="Lastname" class="form-control" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="submit_createOrUpdate" class="btn btn-primary">Create</button>
+                            <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <input type="hidden" id="hdn_employeeID" asp-for="employee.EmployeeID" />
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="form-outline mb-4">
-            <label class="form-label" for="cmb_departmanID">Departman</label>
-            <select type="text" class="form-control" id="cmb_departmanID" asp-items="@(new SelectList(@Model.departmans,"DepartmanID","DepartmanName"))">
-                <option value="0">- Tümü -</option>
-            </select>
-        </div>
-        <!-- Submit button -->
-        <button onclick="submitForm()" type="button" class="btn btn-primary btn-block mb-4">SORGULA</button>
-        <a class="btn btn-primary btn-block mb-4" data-target="#employeeCreate" data-toggle="modal">Yeni Ekle</a><br />
-    </form>
-</div>
-
-
-
-
-
+    </div>
 
 
 
@@ -89,45 +101,42 @@
     </div>
 
 
-    <div class="container">
-        <div class="row">
-            <div class="col col-sm-12">
-                <div class="modal" data-keyboard="false" data-backdrop="static" id="employeeCreate" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Create Employee</h4>
-                                <button class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <form method="post" asp-controller="Home" asp-action="Create">
-                                <div class="modal-body">
 
-                                    <div class="mb-3">
-                                        <label class="form-label" asp-for="employee.FirstName">Firstname</label>
-                                        <input type="text" class="form-control" asp-for="employee.FirstName" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" asp-for="employee.LastName">LastName</label>
-                                        <input type="text" class="form-control" asp-for="employee.LastName" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" asp-for="employee.Departman.DepartmanID">Departman</label>
-                                        <select type="text" class="form-control" asp-for="employee.Departman.DepartmanID" asp-items="@(new SelectList(@Model.departmans,"DepartmanID","DepartmanName"))"></select>
-                                    </div>
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Create</button>
-                                    <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
+    @*<div id="registerPopup" style="display:none" tabindex="-1">
+            <h2>Kayıt Ol</h2>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Employee</h4>
+                        <button class="close" data-dismiss="modal">&times;</button>
                     </div>
-                </div>
+                    <form method="post" asp-controller="Home" asp-action="Create">
+                        <div class="modal-body">
 
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.FirstName">Firstname</label>
+                                <input type="text" class="form-control" asp-for="employee.FirstName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.LastName">LastName</label>
+                                <input type="text" class="form-control" asp-for="employee.LastName" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" asp-for="employee.Departman.DepartmanID">Departman</label>
+                                <select type="text" class="form-control" asp-for="employee.Departman.DepartmanID" asp-items="@(new SelectList(@Model.departmans,"DepartmanID","DepartmanName"))"></select>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-    </div>
+        </div>*@
+
 
     <script>
         function submitForm() {
@@ -148,7 +157,7 @@
                     var data = JSON.parse(response);
                     var html = '<table class="table bg-white rounded border"><thead><tr><th scope="col">#</th><th scope="col">First Name</th><th scope="col">Last Name</th><th scope="col">Department Name</th><th scope="col">İşlemler</th></tr></thead><tbody>';
                     for (var i = 0; i < data.length; i++) {
-                        html += '<tr><td scope="row">' + (i + 1) + '</td><td>' + data[i].FirstName + '</td><td>' + data[i].LastName + '</td><td>' + data[i].DepartmanName + '</td><td><a class="big-icon"><i class="bi bi-pencil-square mr-2"></i></a>  <a class="big-icon margin-icon"  href="/Home/Delete/' + data[i].EmployeeID +'"><i class="bi bi-x-circle-fill"></i></a></td></tr>';
+                        html += '<tr><td scope="row">' + (i + 1) + '</td><td>' + data[i].FirstName + '</td><td>' + data[i].LastName + '</td><td>' + data[i].DepartmanName + '</td><td><a class="big-icon" onclick="editRecord(' + data[i].EmployeeID + ')"><i class="bi bi-pencil-square mr-2"></i></a><a class="big-icon margin-icon"  href="/Home/Delete/' + data[i].EmployeeID + '"><i class="bi bi-x-circle-fill"></i></a></td></tr>';
                     }
                     html += '</tbody></table>';
                     $('#tableContainer').html(html);
@@ -159,13 +168,44 @@
             });
         }
 
+
+        function editRecord(id) {
+            // AJAX işlemi yaparak kaydın bilgilerini al
+            $.ajax({
+                url: "/Home/GetRecord?id=" + id,
+                type: "GET",
+                success: function (employee) {
+                    // AJAX işlemi başarılıysa, metin kutularına verileri yazdır
+                    $("#txt_firstname").val(employee.firstName);
+                    $("#txt_lastname").val(employee.lastName);
+                    $("#cmb_departmanName").val(employee.departmanID);
+                    $("#hdn_employeeID").val(employee.employeeID);
+                    document.getElementById("btn_createOrUpdate").click();
+                    
+                    // Formun action özniteliğini değiştir
+                    $("#form_CreateOrUpdate").attr("action", "/Home/GetRecord");
+                    },
+                        error: function () {
+                            alert("Kayıt bilgileri alınamadı!");
+                        }
+                });
+        }
+
+
+
+        //function openPopup() {
+        //    var popup = document.getElementById("registerPopup");
+        //    popup.style.display = "block";
+        //}
+
+
         document.addEventListener("DOMContentLoaded", function (event) {
             submitForm();
         });
 
     </script>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/jquery.colorbox-min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
 </body>
